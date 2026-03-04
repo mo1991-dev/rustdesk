@@ -1650,13 +1650,7 @@ class _NetworkState extends State<_Network> with AutomaticKeepAliveClientMixin {
             children: [
 
               
-              if (!hideProxy)
-                listTile(
-                  icon: Icons.network_ping_outlined,
-                  title: 'Socks5/Http(s) Proxy',
-                  onTap: changeSocks5Proxy,
-                ),
-              if (!hideWebSocket && (!hideServer || !hideProxy)) divider,
+       
               if (!hideWebSocket)
                 switchWidget(
                     Icons.web_asset_outlined,
