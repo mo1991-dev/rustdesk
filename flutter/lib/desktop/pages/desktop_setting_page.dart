@@ -973,7 +973,13 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
         })));
   }
 
-  Widget permissions(context) {
+  Widget permissions(BuildContext context) {   // 添加了 BuildContext 类型
+  // 【新增】隐藏开关，true 表示隐藏
+  const bool hidePermissions = true; // 设为 true 隐藏，false 显示
+  if (hidePermissions) {
+    return Offstage(); // 返回空占位组件，不显示任何内容
+  }
+    
     bool enabled = !locked;
     // Simple temp wrapper for PR check
     tmpWrapper() {
