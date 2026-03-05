@@ -820,24 +820,27 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
   final scrollController = ScrollController();
 
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     super.build(context);
-    return SingleChildScrollView(
-        controller: scrollController,
-        child: Column(
-          children: [
-            _lock(locked, 'Unlock Security Settings', () {
-              locked = false;
-              setState(() => {});
-            }),
-            preventMouseKeyBuilder(
-              block: locked,
-              child: Column(children: [
-                permissions(context),
-                password(context),
-                _Card(title: '2FA', children: [tfa()]),
-                if (!isChangeIdDisabled())
-                  _Card(title: 'ID', children: [changeId()]),
+    const bool hidePermissions = true; // 隐藏权限
+    const bool hide2FA = true;         // 隐藏2FA
+    const bool hideID = true;          // 隐藏ID
+  return SingleChildScrollView(
+    controller: scrollController,
+    child: Column(
+      children: [
+        _lock(locked, 'Unlock Security Settings', () {
+          locked = false;
+          setState(() => {});
+        }),
+        preventMouseKeyBuilder(
+          block: locked,
+          child: Column(children: [
+            if (!hidePermissions) permissions(context), // 权限卡片（受控）
+            password(context),
+            if (!hide2FA) _Card(title: '2FA', children: [tfa()]), // 2FA卡片
+            if (!hideID && !isChangeIdDisabled()) // ID卡片
+              _Card(title: 'ID', children: [changeId()]),
                 more(context),
               ]),
             ),
@@ -973,13 +976,7 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
         })));
   }
 
-  Widget permissions(BuildContext context) {   // 添加了 BuildContext 类型
-  // 【新增】隐藏开关，true 表示隐藏
-  const bool hidePermissions = true; // 设为 true 隐藏，false 显示
-  if (hidePermissions) {
-    return Offstage(); // 返回空占位组件，不显示任何内容
-  }
-    
+  Widget permissions(context) {
     bool enabled = !locked;
     // Simple temp wrapper for PR check
     tmpWrapper() {
