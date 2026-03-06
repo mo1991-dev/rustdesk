@@ -1224,26 +1224,35 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
         })));
   }
 
-  Widget more(BuildContext context) {
-    bool enabled = !locked;
-    return _Card(title: 'Security', children: [
-      shareRdp(context, enabled),
-      _OptionCheckBox(context, 'Deny LAN discovery', 'enable-lan-discovery',
-          reverse: true, enabled: enabled),
-      ...directIp(context),
-      whitelist(),
-      ...autoDisconnect(context),
-      _OptionCheckBox(context, 'keep-awake-during-incoming-sessions-label',
-          kOptionKeepAwakeDuringIncomingSessions,
-          reverse: false, enabled: enabled),
-      if (bind.mainIsInstalled())
-        _OptionCheckBox(context, 'allow-only-conn-window-open-tip',
-            'allow-only-conn-window-open',
-            reverse: false, enabled: enabled),
-      if (bind.mainIsInstalled() && !isUnlockPinDisabled()) unlockPin()
-    ]);
+Widget more(BuildContext context) {
+  // 假设有一个全局变量或从某处获取的布尔值
+  final bool hideSecurity = true; // 可从配置读取：Get.find<Config>().hideSecurity
+
+  if (hideSecurity) {
+    return const SizedBox.shrink();
   }
 
+  // 原有代码保持不变
+  bool enabled = !locked;
+  return _Card(title: 'Security', children: [
+    shareRdp(context, enabled),
+    _OptionCheckBox(context, 'Deny LAN discovery', 'enable-lan-discovery',
+        reverse: true, enabled: enabled),
+    ...directIp(context),
+    whitelist(),
+    ...autoDisconnect(context),
+    _OptionCheckBox(context, 'keep-awake-during-incoming-sessions-label',
+        kOptionKeepAwakeDuringIncomingSessions,
+        reverse: false, enabled: enabled),
+    if (bind.mainIsInstalled())
+      _OptionCheckBox(context, 'allow-only-conn-window-open-tip',
+          'allow-only-conn-window-open',
+          reverse: false, enabled: enabled),
+    if (bind.mainIsInstalled() && !isUnlockPinDisabled()) unlockPin()
+  ]);
+}
+
+  
   shareRdp(BuildContext context, bool enabled) {
     onChanged(bool b) async {
       await bind.mainSetShareRdp(enable: b);
