@@ -1224,33 +1224,26 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
         })));
   }
 
-Widget more(BuildContext context) {
-  // 假设有一个全局变量或从某处获取的布尔值
-  final bool hideSecurity = true; // 可从配置读取：Get.find<Config>().hideSecurity
-
-  if (hideSecurity) {
-    return const SizedBox.shrink();
+ Widget more(BuildContext context) {
+    bool enabled = !locked;
+    return _Card(title: 'Security', children: [
+      shareRdp(context, enabled),
+      _OptionCheckBox(context, 'Deny LAN discovery', 'enable-lan-discovery',
+          reverse: true, enabled: enabled),
+      ...directIp(context),
+      whitelist(),
+      ...autoDisconnect(context),
+      _OptionCheckBox(context, 'keep-awake-during-incoming-sessions-label',
+          kOptionKeepAwakeDuringIncomingSessions,
+          reverse: false, enabled: enabled),
+      if (bind.mainIsInstalled())
+        _OptionCheckBox(context, 'allow-only-conn-window-open-tip',
+            'allow-only-conn-window-open',
+            reverse: false, enabled: enabled),
+      if (bind.mainIsInstalled() && !isUnlockPinDisabled()) unlockPin()
+    ]);
   }
 
-  // 原有代码保持不变
-  bool enabled = !locked;
-  return _Card(title: 'Security', children: [
-    shareRdp(context, enabled),
-    _OptionCheckBox(context, 'Deny LAN discovery', 'enable-lan-discovery',
-        reverse: true, enabled: enabled),
-    ...directIp(context),
-    whitelist(),
-    ...autoDisconnect(context),
-    _OptionCheckBox(context, 'keep-awake-during-incoming-sessions-label',
-        kOptionKeepAwakeDuringIncomingSessions,
-        reverse: false, enabled: enabled),
-    if (bind.mainIsInstalled())
-      _OptionCheckBox(context, 'allow-only-conn-window-open-tip',
-          'allow-only-conn-window-open',
-          reverse: false, enabled: enabled),
-    if (bind.mainIsInstalled() && !isUnlockPinDisabled()) unlockPin()
-  ]);
-}
 
   
   shareRdp(BuildContext context, bool enabled) {
@@ -1439,17 +1432,64 @@ Widget more(BuildContext context) {
   }
 
 List<Widget> autoDisconnect(BuildContext context) {
-  // 原代码全部删除，替换为直接返回一个只读的提示信息
-  // 不再使用 TextEditingController、update、applyEnabled 等变量
-  return [
-    _SubLabeledWidget(
-      context,
-      'auto_disconnect_option_tip',   // 标题：自动断开
-      const Text('10 minutes'),       // 固定显示10分钟
-      enabled: false,                 // 禁用状态，用户无法交互
-    ),
-  ];
-}
+    TextEditingController controller = TextEditingController();
+    update(bool v) => setState(() {});
+    RxBool applyEnabled = false.obs;
+    return [
+      _OptionCheckBox(
+          context, 'auto_disconnect_option_tip', kOptionAllowAutoDisconnect,
+          update: update, enabled: !locked),
+      () {
+        bool enabled = option2bool(kOptionAllowAutoDisconnect,
+            bind.mainGetOptionSync(key: kOptionAllowAutoDisconnect));
+        if (!enabled) applyEnabled.value = false;
+        controller.text =
+            bind.mainGetOptionSync(key: kOptionAutoDisconnectTimeout);
+        final isOptFixed = isOptionFixed(kOptionAutoDisconnectTimeout);
+        return Offstage(
+          offstage: !enabled,
+          child: _SubLabeledWidget(
+            context,
+            'Timeout in minutes',
+            Row(children: [
+              SizedBox(
+                width: 95,
+                child: TextField(
+                  controller: controller,
+                  enabled: enabled && !locked && !isOptFixed,
+                  onChanged: (_) => applyEnabled.value = true,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(
+                        r'^([0-9]|[1-9]\d|[1-9]\d{2}|[1-9]\d{3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$')),
+                  ],
+                  decoration: const InputDecoration(
+                    hintText: '10',
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                  ),
+                ).workaroundFreezeLinuxMint().marginOnly(right: 15),
+              ),
+              Obx(() => ElevatedButton(
+                    onPressed:
+                        applyEnabled.value && enabled && !locked && !isOptFixed
+                            ? () async {
+                                applyEnabled.value = false;
+                                await bind.mainSetOption(
+                                    key: kOptionAutoDisconnectTimeout,
+                                    value: controller.text);
+                              }
+                            : null,
+                    child: Text(
+                      translate('Apply'),
+                    ),
+                  ))
+            ]),
+            enabled: enabled && !locked && !isOptFixed,
+          ),
+        );
+      }(),
+    ];
+  }
 
   Widget unlockPin() {
     bool enabled = !locked;
