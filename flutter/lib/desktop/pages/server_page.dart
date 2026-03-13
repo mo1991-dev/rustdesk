@@ -626,7 +626,7 @@ class _PrivilegeBoardState extends State<_PrivilegeBoard> {
   }
 
   @override
-  Widget build(BuildContext context) {
+    Widget build(BuildContext context) {
     final crossAxisCount = 4;
     final spacing = 10.0;
     return Container(
@@ -646,104 +646,136 @@ class _PrivilegeBoardState extends State<_PrivilegeBoard> {
           ),
         ],
       ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          translate("Permissions"),
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
-        ).marginOnly(left: 4.0, bottom: 8.0),
-        Expanded(
-          child: GridView.count(
-            crossAxisCount: crossAxisCount,
-            padding: EdgeInsets.symmetric(horizontal: spacing),
-            mainAxisSpacing: spacing,
-            crossAxisSpacing: spacing,
-            children: client.type_() == ClientType.camera
-                ? [
-                    // ----- 以下为摄像头类型权限，保持原样未修改 -----
-                    buildPermissionIcon(
-                      client.audio,
-                      Icons.volume_up_rounded,
-                      (enabled) {
-                        bind.cmSwitchPermission(
-                            connId: client.id,
-                            name: "audio",
-                            enabled: enabled);
-                        setState(() {
-                          client.audio = enabled;
-                        });
-                      },
-                      translate('Enable audio'),
-                    ),
-                    buildPermissionIcon(
-                      client.recording,
-                      Icons.videocam_rounded,
-                      (enabled) {
-                        bind.cmSwitchPermission(
-                            connId: client.id,
-                            name: "recording",
-                            enabled: enabled);
-                        setState(() {
-                          client.recording = enabled;
-                        });
-                      },
-                      translate('Enable recording session'),
-                    ),
-                  ]
-                : [
-                    // ----- 键盘/鼠标（保持原样，可编辑）-----
-                    buildPermissionIcon(
-                      client.keyboard,
-                      Icons.keyboard,
-                      (enabled) {
-                        bind.cmSwitchPermission(
-                            connId: client.id,
-                            name: "keyboard",
-                            enabled: enabled);
-                        setState(() {
-                          client.keyboard = enabled;
-                        });
-                      },
-                      translate('Enable keyboard/mouse'),
-                    ),
-                    // ----- 剪贴板（修改：强制禁用且不可编辑）-----
-                    buildPermissionIcon(
-                      false, // 修改：强制关闭
-                      Icons.assignment_rounded,
-                      null,  // 修改：不可点击
-                      translate('Enable clipboard'),
-                    ),
-                    // ----- 音频（修改：强制禁用且不可编辑）-----
-                    buildPermissionIcon(
-                      false, // 修改：强制关闭
-                      Icons.volume_up_rounded,
-                      null,  // 修改：不可点击
-                      translate('Enable audio'),
-                    ),
-                    // ----- 文件传输（修改：强制禁用且不可编辑）-----
-                    buildPermissionIcon(
-                      false, // 修改：强制关闭
-                      Icons.upload_file_rounded,
-                      null,  // 修改：不可点击
-                      translate('Enable file copy and paste'),
-                    ),
-                    // ----- 远程重启（修改：强制禁用且不可编辑）-----
-                    buildPermissionIcon(
-                      false, // 修改：强制关闭
-                      Icons.restart_alt_rounded,
-                      null,  // 修改：不可点击
-                      translate('Enable remote restart'),
-                    ),
-                    // ----- 录制会话（修改：强制禁用且不可编辑）-----
-                    buildPermissionIcon(
-                      false, // 修改：强制关闭
-                      Icons.videocam_rounded,
-                      null,  // 修改：不可点击
-                      translate('Enable recording session'),
-                    ),
-                    // ----- 阻止用户输入（保持原样，仅Windows平台显示，可编辑）-----
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            translate("Permissions"),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ).marginOnly(left: 4.0, bottom: 8.0),
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: crossAxisCount,
+              padding: EdgeInsets.symmetric(horizontal: spacing),
+              mainAxisSpacing: spacing,
+              crossAxisSpacing: spacing,
+              children: client.type_() == ClientType.camera
+                  ? [
+                      buildPermissionIcon(
+                        client.audio,
+                        Icons.volume_up_rounded,
+                        (enabled) {
+                          bind.cmSwitchPermission(
+                              connId: client.id,
+                              name: "audio",
+                              enabled: enabled);
+                          setState(() {
+                            client.audio = enabled;
+                          });
+                        },
+                        translate('Enable audio'),
+                      ),
+                      buildPermissionIcon(
+                        client.recording,
+                        Icons.videocam_rounded,
+                        (enabled) {
+                          bind.cmSwitchPermission(
+                              connId: client.id,
+                              name: "recording",
+                              enabled: enabled);
+                          setState(() {
+                            client.recording = enabled;
+                          });
+                        },
+                        translate('Enable recording session'),
+                      ),
+                    ]
+                  : [
+                      buildPermissionIcon(
+                        client.keyboard,
+                        Icons.keyboard,
+                        (enabled) {
+                          bind.cmSwitchPermission(
+                              connId: client.id,
+                              name: "keyboard",
+                              enabled: enabled);
+                          setState(() {
+                            client.keyboard = enabled;
+                          });
+                        },
+                        translate('Enable keyboard/mouse'),
+                      ),
+                      buildPermissionIcon(
+                        client.clipboard,
+                        Icons.assignment_rounded,
+                        (enabled) {
+                          bind.cmSwitchPermission(
+                              connId: client.id,
+                              name: "clipboard",
+                              enabled: enabled);
+                          setState(() {
+                            client.clipboard = enabled;
+                          });
+                        },
+                        translate('Enable clipboard'),
+                      ),
+                      buildPermissionIcon(
+                        client.audio,
+                        Icons.volume_up_rounded,
+                        (enabled) {
+                          bind.cmSwitchPermission(
+                              connId: client.id,
+                              name: "audio",
+                              enabled: enabled);
+                          setState(() {
+                            client.audio = enabled;
+                          });
+                        },
+                        translate('Enable audio'),
+                      ),
+                      buildPermissionIcon(
+                        client.file,
+                        Icons.upload_file_rounded,
+                        (enabled) {
+                          bind.cmSwitchPermission(
+                              connId: client.id,
+                              name: "file",
+                              enabled: enabled);
+                          setState(() {
+                            client.file = enabled;
+                          });
+                        },
+                        translate('Enable file copy and paste'),
+                      ),
+                      buildPermissionIcon(
+                        client.restart,
+                        Icons.restart_alt_rounded,
+                        (enabled) {
+                          bind.cmSwitchPermission(
+                              connId: client.id,
+                              name: "restart",
+                              enabled: enabled);
+                          setState(() {
+                            client.restart = enabled;
+                          });
+                        },
+                        translate('Enable remote restart'),
+                      ),
+                      buildPermissionIcon(
+                        client.recording,
+                        Icons.videocam_rounded,
+                        (enabled) {
+                          bind.cmSwitchPermission(
+                              connId: client.id,
+                              name: "recording",
+                              enabled: enabled);
+                          setState(() {
+                            client.recording = enabled;
+                          });
+                        },
+                        translate('Enable recording session'),
+                      ),
                       // only windows support block input
                       if (isWindows)
                         buildPermissionIcon(
