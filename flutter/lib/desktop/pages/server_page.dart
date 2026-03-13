@@ -662,6 +662,7 @@ class _PrivilegeBoardState extends State<_PrivilegeBoard> {
               crossAxisSpacing: spacing,
               children: client.type_() == ClientType.camera
                   ? [
+                      // ===== 以下为摄像头类型权限，保持原样未修改 =====
                       buildPermissionIcon(
                         client.audio,
                         Icons.volume_up_rounded,
@@ -692,6 +693,7 @@ class _PrivilegeBoardState extends State<_PrivilegeBoard> {
                       ),
                     ]
                   : [
+                      // ===== 键盘/鼠标（保持原样，可编辑）=====
                       buildPermissionIcon(
                         client.keyboard,
                         Icons.keyboard,
@@ -706,76 +708,48 @@ class _PrivilegeBoardState extends State<_PrivilegeBoard> {
                         },
                         translate('Enable keyboard/mouse'),
                       ),
+  
+                      // ===== 剪贴板（修改：强制禁用，回调为空函数）=====
                       buildPermissionIcon(
-                        client.clipboard,
+                        false,                 // 强制关闭
                         Icons.assignment_rounded,
-                        (enabled) {
-                          bind.cmSwitchPermission(
-                              connId: client.id,
-                              name: "clipboard",
-                              enabled: enabled);
-                          setState(() {
-                            client.clipboard = enabled;
-                          });
-                        },
+                        (enabled) {},          // 空函数，不执行任何操作
                         translate('Enable clipboard'),
                       ),
+  
+                      // ===== 音频（修改：强制禁用，回调为空函数）=====
                       buildPermissionIcon(
-                        client.audio,
+                        false,
                         Icons.volume_up_rounded,
-                        (enabled) {
-                          bind.cmSwitchPermission(
-                              connId: client.id,
-                              name: "audio",
-                              enabled: enabled);
-                          setState(() {
-                            client.audio = enabled;
-                          });
-                        },
+                        (enabled) {},
                         translate('Enable audio'),
                       ),
+  
+                      // ===== 文件传输（修改：强制禁用，回调为空函数）=====
                       buildPermissionIcon(
-                        client.file,
+                        false,
                         Icons.upload_file_rounded,
-                        (enabled) {
-                          bind.cmSwitchPermission(
-                              connId: client.id,
-                              name: "file",
-                              enabled: enabled);
-                          setState(() {
-                            client.file = enabled;
-                          });
-                        },
+                        (enabled) {},
                         translate('Enable file copy and paste'),
                       ),
+  
+                      // ===== 远程重启（修改：强制禁用，回调为空函数）=====
                       buildPermissionIcon(
-                        client.restart,
+                        false,
                         Icons.restart_alt_rounded,
-                        (enabled) {
-                          bind.cmSwitchPermission(
-                              connId: client.id,
-                              name: "restart",
-                              enabled: enabled);
-                          setState(() {
-                            client.restart = enabled;
-                          });
-                        },
+                        (enabled) {},
                         translate('Enable remote restart'),
                       ),
+  
+                      // ===== 录制会话（修改：强制禁用，回调为空函数）=====
                       buildPermissionIcon(
-                        client.recording,
+                        false,
                         Icons.videocam_rounded,
-                        (enabled) {
-                          bind.cmSwitchPermission(
-                              connId: client.id,
-                              name: "recording",
-                              enabled: enabled);
-                          setState(() {
-                            client.recording = enabled;
-                          });
-                        },
+                        (enabled) {},
                         translate('Enable recording session'),
                       ),
+  
+                      // ===== 阻止用户输入（保持原样，仅Windows平台显示，可编辑）=====
                       // only windows support block input
                       if (isWindows)
                         buildPermissionIcon(
