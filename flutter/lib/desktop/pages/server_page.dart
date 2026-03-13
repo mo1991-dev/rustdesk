@@ -646,26 +646,6 @@ class _PrivilegeBoardState extends State<_PrivilegeBoard> {
           ),
         ],
       ),
-Widget build(BuildContext context) {
-  final crossAxisCount = 4;
-  final spacing = 10.0;
-  return Container(
-    width: double.infinity,
-    height: 160.0,
-    margin: EdgeInsets.all(5.0),
-    padding: EdgeInsets.all(5.0),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10.0),
-      color: Theme.of(context).colorScheme.background,
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.2),
-          spreadRadius: 1,
-          blurRadius: 1,
-          offset: Offset(0, 1.5),
-        ),
-      ],
-    ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
