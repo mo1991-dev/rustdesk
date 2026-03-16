@@ -820,11 +820,18 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
   final scrollController = ScrollController();
 
   @override
- Widget build(BuildContext context) {
-    super.build(context);
-    const bool hidePermissions = true; // 隐藏权限
-    const bool hide2FA = true;         // 隐藏2FA
-    const bool hideID = true;          // 隐藏ID
+  Widget build(BuildContext context) {
+  super.build(context);
+  const bool hidePermissions = true; // 隐藏权限
+  const bool hide2FA = true;         // 隐藏2FA
+  const bool hideID = true;          // 隐藏ID
+  const bool hideSecurity = true;    // 新增：隐藏整个安全选项卡
+
+  // 如果整个选项卡需要隐藏，直接返回空组件
+  if (hideSecurity) {
+    return const SizedBox.shrink(); // 或 Container()
+  }
+
   return SingleChildScrollView(
     controller: scrollController,
     child: Column(
@@ -841,12 +848,13 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
             if (!hide2FA) _Card(title: '2FA', children: [tfa()]), // 2FA卡片
             if (!hideID && !isChangeIdDisabled()) // ID卡片
               _Card(title: 'ID', children: [changeId()]),
-                more(context),
-              ]),
-            ),
-          ],
-        )).marginOnly(bottom: _kListViewBottomMargin);
-  }
+            more(context),
+          ]),
+        ),
+      ],
+    ).marginOnly(bottom: _kListViewBottomMargin),
+  );
+}
 
   Widget tfa() {
     bool enabled = !locked;
