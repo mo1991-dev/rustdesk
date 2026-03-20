@@ -4,8 +4,8 @@ version = "1.4.5"
 authors = ["rustdesk <info@rustdesk.com>"]
 edition = "2021"
 build= "build.rs"
-description = "Ramaxel Remote Desktop"
-default-run = "ramaxel"
+description = "RustDesk Remote Desktop"
+default-run = "rustdesk"
 rust-version = "1.75"
 
 [lib]
@@ -215,7 +215,7 @@ libxdo-sys = { path = "libs/libxdo-sys-stub" }
 [package.metadata.winres]
 LegalCopyright = "Copyright © 2025 Purslane Ltd. All rights reserved."
 ProductName = "Ramaxel"
-FileDescription = "Ramaxel Remote Desktop"
+FileDescription = "RustDesk Remote Desktop"
 OriginalFilename = "ramaxel.exe"
 
 [target.'cfg(target_os="windows")'.build-dependencies]
