@@ -1,11 +1,11 @@
 [package]
-name = "ramaxel-remote"
+name = "ramaxel"
 version = "1.4.5"
 authors = ["rustdesk <info@rustdesk.com>"]
 edition = "2021"
 build= "build.rs"
 description = "Ramaxel Remote Desktop"
-default-run = "ramaxel-remote"
+default-run = "ramaxel"
 rust-version = "1.75"
 
 [lib]
